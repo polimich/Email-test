@@ -30,7 +30,14 @@ namespace Email_test
 
             using (var client = new SmtpClient())
             {
-
+                client.ServerCertificateValidationCallback =
+                    (s, c, h, e) => true;
+                client.Connect(_server, _port,
+                    MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable);
+                client.Authenticate(_username, _password);
+                client.Send(msg);
+                client.Disconnect(true);
+                return Task.FromResult(0);
             }
         }
     }
